@@ -1,21 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-deployment
+  name: apache-deployment
   labels:
-    app: nginx
+    app: apache
 spec:
-  replicas: 3
+  replicas: 3 # You can change this number
   selector:
     matchLabels:
-      app: nginx
+      app: apache
   template:
     metadata:
       labels:
-        app: nginx
+        app: apache
     spec:
       containers:
-      - name: nginx
-        image: nginx:1.14.2
+      - name: httpd-container
+        image: httpd:latest # Uses the latest official Apache image
         ports:
-        - containerPort: 80
+        - containerPort: 80 # Apache typically runs on port 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache-service
+spec:
+  selector:
+    app: apache
+  ports:
+    - protocol: TCP
+      port: 80 # Service port
+      targetPort: 80 # Container port
+  type: ClusterIP # Makes the service only accessible within the cluster
